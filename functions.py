@@ -1,10 +1,21 @@
+import warnings
+import numpy as np
+import pandas as pd
+import random
+import math
+from operator import itemgetter
+from statsmodels.tsa.stattools import acf
+from matplotlib import pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.metrics import mean_squared_error, mean_absolute_error
+import pylab as pl
+from statsmodels.tsa.arima_model import ARIMA
+import statsmodels.api as sm
+from statsmodels.tsa.statespace.mlemodel import MLEResults
+from IPython import display
+from scipy import stats
+
 def predictArima(series_tr, series_val, n_previsoes, order, seasonal_order, model_fit):
-    from sklearn.metrics import mean_squared_error, mean_absolute_error
-    import warnings
-    import numpy as np
-    import pandas as pd
-    import random
-    import math
     rmse= []
     yhat = np.zeros((series_val.shape[0],n_previsoes))
     # load and prepare datasets
