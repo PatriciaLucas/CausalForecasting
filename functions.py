@@ -161,4 +161,4 @@ def run_fts(train, test, model_name):
     except:
       pass
   results = pd.DataFrame(rows,columns=["Model","Order","Size","RMSE"]).sort_values(["RMSE","Size"])
-  return results['RMSE'], test, forecasts
+  return results['RMSE'][0], test, forecasts
