@@ -16,7 +16,7 @@ from IPython import display
 from scipy import stats
 
 
-def get_dataframe(data, tag):
+def get_dataframe(data):
   import operator
   data_new = pd.DataFrame(columns=['UR','UR','UR','UR','TMAX','TMAX','TMAX','ETO','ETO','ETO','ETO','R','TMIN','TMIN','TMIN','V','V']) #16 lags
   lags = {
@@ -32,8 +32,6 @@ def get_dataframe(data, tag):
     a.append(max(lags[max(lags.items(), key=operator.itemgetter(1))[0]]))
   max_lags = max(a)
   y = data['ETO'].loc[max_lags:]
-  if tag:
-    y.drop(y.tail(1).index,inplace=True)
 
   for i in range(data.shape[0] - max_lags):
     aux = []
@@ -56,9 +54,10 @@ def predict(X_test, y_test, model):
   return yhat, rmse
 
 def run_causalForecasting(train, test):
-  X_train, y_train = get_dataframe(train, tag=True)
+  train = train.reset_index(drop=True)
+  X_train, y_train = get_dataframe(train)
   test = test.reset_index(drop=True)
-  X_test, y_test = get_dataframe(test, tag=False)
+  X_test, y_test = get_dataframe(test)
   model = fit(X_train, y_train)
   yhat, rmse = predict(X_test, y_test, model)
   return rmse, y_test, yhat
