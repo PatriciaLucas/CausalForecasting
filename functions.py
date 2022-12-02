@@ -1,5 +1,10 @@
 def predictArima(series_tr, series_val, n_previsoes, order, seasonal_order, model_fit):
     from sklearn.metrics import mean_squared_error, mean_absolute_error
+    import warnings
+    import numpy as np
+    import pandas as pd
+    import random
+    import math
     rmse= []
     yhat = np.zeros((series_val.shape[0],n_previsoes))
     # load and prepare datasets
