@@ -15,6 +15,54 @@ from statsmodels.tsa.statespace.mlemodel import MLEResults
 from IPython import display
 from scipy import stats
 
+
+def get_dataframe(data, tag):
+  import operator
+  data_new = pd.DataFrame(columns=['UR','UR','UR','UR','TMAX','TMAX','TMAX','ETO','ETO','ETO','ETO','R','TMIN','TMIN','TMIN','V','V']) #16 lags
+  lags = {
+      'UR': [1,2,3,5],
+      'T_MAX': [1,2,3],
+      'ETO': [1,2,3,4],
+      'R': [1],
+      'T_MIN': [1,2,3],
+      'V': [1,2]
+  }
+  a = []
+  for i in lags:
+    a.append(max(lags[max(lags.items(), key=operator.itemgetter(1))[0]]))
+  max_lags = max(a)
+  y = data['ETO'].loc[max_lags:]
+  if tag:
+    y.drop(y.tail(1).index,inplace=True)
+
+  for i in range(data.shape[0] - max_lags):
+    aux = []
+    for var in lags:
+      for lag in lags[var]:
+        aux.append(data[var][i+lag])
+    data_new.loc[i] = aux
+  return data_new, y
+
+def fit(X_train, y_train):
+  from sklearn.linear_model import LinearRegression
+  model = LinearRegression().fit(X_train, y_train)
+  return model
+
+def predict(X_test, y_test, model):
+  from sklearn.metrics import mean_squared_error
+  import math
+  yhat = model.predict(X_test)
+  rmse = math.sqrt(mean_squared_error(y_test,yhat))
+  return yhat, rmse
+
+def run_causalForecasting(train, test):
+  X_train, y_train = get_dataframe(train, tag=True)
+  test = test.reset_index(drop=True)
+  X_test, y_test = get_dataframe(test, tag=False)
+  model = fit(X_train, y_train)
+  yhat, rmse = predict(X_test, y_test, model)
+  return rmse, y_test, yhat
+
 def predictArima(series_tr, series_val, n_previsoes, order, seasonal_order, model_fit):
     rmse= []
     yhat = np.zeros((series_val.shape[0],n_previsoes))
