@@ -97,7 +97,7 @@ def run_arima(train, test):
   model_AR = ARIMA(train.values, order=order)
   model_fit = model_AR.fit(disp=0)
   rmse, yhat, y_test = predictArima(train, test, 1,  order, seasonal_order, model_fit)
-  return rmse[0][0, y_test, yhat
+  return rmse[0][0], y_test, yhat
 
 
 def run_fts(train, test, model_name):
