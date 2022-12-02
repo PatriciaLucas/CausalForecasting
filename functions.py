@@ -3,6 +3,13 @@ def run_fts(train, test, model_name):
   from pyFTS.models.multivariate import common, variable, mvfts
   from pyFTS.models.seasonal import partitioner as seasonal
   from pyFTS.models.seasonal.common import DateTime
+  from pyFTS.common import Util
+  from pyFTS.benchmarks import Measures
+  from pyFTS.partitioners import Grid
+  from pyFTS.models import hofts, pwfts
+  from pyFTS.common import Membership
+  from pyFTS.models.multivariate import mvfts, wmvfts, cmvfts, grid
+  from pyFTS.models.multivariate import common, variable, mvfts
 
   #Definição das variáveis
   UH = variable.Variable("UR", data_label="UR", alias='UR', partitioner=Grid.GridPartitioner, npart=16, data=train) 
