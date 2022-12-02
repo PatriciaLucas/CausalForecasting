@@ -1,3 +1,42 @@
+def predictArima(series_tr, series_val, n_previsoes, order, seasonal_order, model_fit):
+    from sklearn.metrics import mean_squared_error, mean_absolute_error
+    rmse= []
+    yhat = np.zeros((series_val.shape[0],n_previsoes))
+    # load and prepare datasets
+    dataset = series_tr
+    X = dataset.values.astype('float32')
+    history = [x for x in X]
+    validation = series_val
+    y = validation.values.astype('float32')
+    
+    # make first prediction
+    predictions = list()
+    yhat[0,:] = model_fit.forecast(steps=n_previsoes)[0]
+    predictions.append(yhat)
+    history.append(y[0])
+    for i in range(1, len(y)):
+      model = sm.tsa.statespace.SARIMAX(history,order=order,seasonal_order=seasonal_order)
+      model_fit = model.fit(disp=0)
+      yhat[i,:] = model_fit.forecast(steps=n_previsoes)[0]
+      predictions.append(yhat)
+      obs = y[i]
+      history.append(obs)
+
+    for i in range(n_previsoes):
+            rmse.append(np.sqrt(mean_squared_error(yhat[0:(yhat.shape[0])-i,i],y[i:])))
+    return rmse, yhat, y
+
+def run_arima(train, test):
+  from statsmodels.tsa.arima_model import ARIMA
+  
+  order = (2,2,0)
+  seasonal_order = (0,1,0,12)
+  model_AR = ARIMA(train.values, order=order)
+  model_fit = model_AR.fit(disp=0)
+  rmse, yhat, y_test = predictArima(train, test, 1,  order, seasonal_order, model_fit)
+  return rmse, y_test, yhat
+
+
 def run_fts(train, test, model_name):
   from pyFTS.partitioners import Grid, Util as pUtil
   from pyFTS.models.multivariate import common, variable, mvfts
