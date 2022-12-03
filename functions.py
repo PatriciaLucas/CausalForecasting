@@ -162,3 +162,26 @@ def run_fts(train, test, model_name):
       pass
   results = pd.DataFrame(rows,columns=["Model","Order","Size","RMSE"]).sort_values(["RMSE","Size"])
   return results['RMSE'][0], test, forecasts
+
+def plot_residuals(yhat, ytest):  
+  from pandas import read_csv
+  from pandas import DataFrame
+  from pandas import concat
+  from matplotlib import pyplot
+  from statsmodels.graphics.gofplots import qqplot
+
+  # calculate residuals
+  residuals = [ytest[i]-yhat[i] for i in range(len(yhat))]
+  residuals = DataFrame(residuals)
+  # histogram plot
+  #residuals.hist()
+  #pyplot.show()
+  # density plot
+  residuals.plot(kind='kde')
+  pyplot.legend('Resíduos')
+  pyplot.show()
+
+  residuals = [ytest[i]-yhat[i] for i in range(len(yhat))]
+  residuals = np.array(residuals)
+  qqplot(residuals)
+  pyplot.show()
