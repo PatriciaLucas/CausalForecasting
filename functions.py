@@ -92,8 +92,7 @@ def predictArima(series_tr, series_val, n_previsoes, order, seasonal_order, mode
 def run_arima(train, test):
   from statsmodels.tsa.arima_model import ARIMA
   
-  order = (2,2,0)
-  seasonal_order = (0,1,0,12)
+  order = (2,0,0)
   model_AR = ARIMA(train.values, order=order)
   model_fit = model_AR.fit(disp=0)
   rmse, yhat, y_test = predictArima(train, test, 1,  order, seasonal_order, model_fit)
