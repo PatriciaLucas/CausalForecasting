@@ -28,17 +28,19 @@ def get_dataframe(data):
       'V': [1,2]
   }
   a = []
+  y = []
   for i in lags:
     a.append(max(lags[max(lags.items(), key=operator.itemgetter(1))[0]]))
   max_lags = max(a)
-  y = data['ETO'].loc[max_lags:]
 
-  for i in range(data.shape[0] - max_lags):
+  for i in range(max_lags, data.shape[0] - max_lags+1):
     aux = []
     for var in lags:
       for lag in lags[var]:
-        aux.append(data[var][i+lag])
+        aux.append(data[var][i-lag])
     data_new.loc[i] = aux
+    y.append(data['ETO'][i])
+  y = pd.DataFrame (y, columns = ['ETO'])
   return data_new, y
 
 def fit(X_train, y_train):
